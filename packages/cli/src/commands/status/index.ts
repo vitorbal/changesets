@@ -43,7 +43,10 @@ export default async function getStatus(
     ref: sinceBranch || config.baseBranch
   });
 
-  if (changedPackages.length > 0 && changesets.length === 0) {
+  // Filter private packages since those are not published, so they don't need changesets.
+  const changedPublishablePackages = changedPackages.filter(pkg => !pkg.packageJson.private)
+
+  if (changedPublishablePackages.length > 0 && changesets.length === 0) {
     error(
       "Some packages have been changed but no changesets were found. Run `changeset add` to resolve this error."
     );
